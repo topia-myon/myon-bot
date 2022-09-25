@@ -3,10 +3,9 @@ import path from "path";
 import sharp from "sharp";
 import {
   ActionRowBuilder,
-  ButtonBuilder,
-  ButtonInteraction,
-  ButtonStyle,
   ChatInputCommandInteraction,
+  SelectMenuBuilder,
+  SelectMenuInteraction,
 } from "discord.js";
 import { ASSETS } from "../const.js";
 import { fetch } from "undici";
@@ -109,35 +108,26 @@ const colorParameters = [
 const uranai = {
   name: "占い",
   description: "ちいかわ占いを受ける！",
-  buttonIdPrefix: "uranai-button-",
+  prefix: "uranai",
   async handler(interaction: ChatInputCommandInteraction) {
-    const first = new ActionRowBuilder<ButtonBuilder>();
-    const second = new ActionRowBuilder<ButtonBuilder>();
-    const third = new ActionRowBuilder<ButtonBuilder>();
-    for (
-      const { row, start, end } of [
-        { row: first, start: 0, end: 5 },
-        { row: second, start: 5, end: 10 },
-        { row: third, start: 10, end: 12 },
-      ]
-    ) {
-      for (const { id, name } of seiza.slice(start, end)) {
-        row.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`uranai-button-${id}`)
-            .setLabel(name)
-            .setStyle(ButtonStyle.Secondary),
-        );
-      }
-    }
-
+    const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+      new SelectMenuBuilder()
+        .setCustomId("uranai-selectMenu-seiza")
+        .setPlaceholder("あなたの星座を選んでね！")
+        .addOptions(
+          ...seiza.map(({ id, name }) => ({
+            label: name,
+            value: id,
+          })),
+        ),
+    );
     await interaction.reply({
       content: "あなたの星座を教えてね！",
-      components: [first, second, third],
+      components: [row],
     });
   },
-  async buttonHandler(interaction: ButtonInteraction) {
-    const id = interaction.customId.replace("uranai-button-", "");
+  async selectMenuHandler(interaction: SelectMenuInteraction) {
+    const id = interaction.values[0];
     const seizaData = seiza.find((seiza) => seiza.id === id)!;
 
     const svgTemplate = fs.readFileSync(

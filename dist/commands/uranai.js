@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, } from "discord.js";
+import { ActionRowBuilder, SelectMenuBuilder, } from "discord.js";
 import { ASSETS } from "../const.js";
 import { fetch } from "undici";
 const seiza = [
@@ -101,30 +101,22 @@ const colorParameters = [
 const uranai = {
     name: "占い",
     description: "ちいかわ占いを受ける！",
-    buttonIdPrefix: "uranai-button-",
+    prefix: "uranai",
     async handler(interaction) {
-        const first = new ActionRowBuilder();
-        const second = new ActionRowBuilder();
-        const third = new ActionRowBuilder();
-        for (const { row, start, end } of [
-            { row: first, start: 0, end: 5 },
-            { row: second, start: 5, end: 10 },
-            { row: third, start: 10, end: 12 },
-        ]) {
-            for (const { id, name } of seiza.slice(start, end)) {
-                row.addComponents(new ButtonBuilder()
-                    .setCustomId(`uranai-button-${id}`)
-                    .setLabel(name)
-                    .setStyle(ButtonStyle.Secondary));
-            }
-        }
+        const row = new ActionRowBuilder().addComponents(new SelectMenuBuilder()
+            .setCustomId("uranai-selectMenu-seiza")
+            .setPlaceholder("あなたの星座を選んでね！")
+            .addOptions(...seiza.map(({ id, name }) => ({
+            label: name,
+            value: id,
+        }))));
         await interaction.reply({
             content: "あなたの星座を教えてね！",
-            components: [first, second, third],
+            components: [row],
         });
     },
-    async buttonHandler(interaction) {
-        const id = interaction.customId.replace("uranai-button-", "");
+    async selectMenuHandler(interaction) {
+        const id = interaction.values[0];
         const seizaData = seiza.find((seiza) => seiza.id === id);
         const svgTemplate = fs.readFileSync(path.resolve(ASSETS, "images", "tiikawa-uranai.template.svg"), "utf8");
         const [{ detail }] = await fetch("https://www.asahi.co.jp/data/ohaasa2020/horoscope.json").then((r) => r.json());

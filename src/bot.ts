@@ -27,7 +27,7 @@ export default class Bot<
     }
 
     this.#server = FastifyFactory({
-      logger: true, // process.env.NODE_ENV !== "production",
+      logger: process.env.NODE_ENV !== "production",
     });
     this.#client = client;
     this.#commands = commands;
@@ -82,11 +82,24 @@ export default class Bot<
     } else if (interaction.isButton()) {
       const { customId } = interaction;
       const command = this.#commands.find(
-        (command) =>
-          command.buttonIdPrefix && customId.startsWith(command.buttonIdPrefix),
+        (command) => customId.startsWith(`${command.prefix}-button-`),
       );
       if (!command || !command.buttonHandler) return;
       await command.buttonHandler(interaction);
+    } else if (interaction.isSelectMenu()) {
+      const { customId } = interaction;
+      const command = this.#commands.find(
+        (command) => customId.startsWith(`${command.prefix}-selectMenu-`),
+      );
+      if (!command || !command.selectMenuHandler) return;
+      await command.selectMenuHandler(interaction);
+    } else if (interaction.isAutocomplete()) {
+      const { commandName } = interaction;
+      const command = this.#commands.find(
+        (command) => commandName === command.name,
+      );
+      if (!command || !command.autocompleteHandler) return;
+      await command.autocompleteHandler(interaction);
     }
   };
 }

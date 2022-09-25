@@ -29,10 +29,24 @@ export default class Bot {
             }
             else if (interaction.isButton()) {
                 const { customId } = interaction;
-                const command = __classPrivateFieldGet(this, _Bot_commands, "f").find((command) => command.buttonIdPrefix && customId.startsWith(command.buttonIdPrefix));
+                const command = __classPrivateFieldGet(this, _Bot_commands, "f").find((command) => customId.startsWith(`${command.prefix}-button-`));
                 if (!command || !command.buttonHandler)
                     return;
                 await command.buttonHandler(interaction);
+            }
+            else if (interaction.isSelectMenu()) {
+                const { customId } = interaction;
+                const command = __classPrivateFieldGet(this, _Bot_commands, "f").find((command) => customId.startsWith(`${command.prefix}-selectMenu-`));
+                if (!command || !command.selectMenuHandler)
+                    return;
+                await command.selectMenuHandler(interaction);
+            }
+            else if (interaction.isAutocomplete()) {
+                const { commandName } = interaction;
+                const command = __classPrivateFieldGet(this, _Bot_commands, "f").find((command) => commandName === command.name);
+                if (!command || !command.autocompleteHandler)
+                    return;
+                await command.autocompleteHandler(interaction);
             }
         };
         if (!process.env.DISCORD_TOKEN ||
@@ -41,7 +55,7 @@ export default class Bot {
             throw new Error("Env vars are not defined in the environment.");
         }
         __classPrivateFieldSet(this, _Bot_server, FastifyFactory({
-            logger: true, // process.env.NODE_ENV !== "production",
+            logger: process.env.NODE_ENV !== "production",
         }), "f");
         __classPrivateFieldSet(this, _Bot_client, client, "f");
         __classPrivateFieldSet(this, _Bot_commands, commands, "f");

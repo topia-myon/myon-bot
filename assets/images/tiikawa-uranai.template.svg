@@ -38,15 +38,8 @@
         <line x1="1025" y1="247" x2="923" y2="306" vector-effect="non-scaling-stroke" stroke-width="20" stroke="__LINE__" stroke-opacity="0.38" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3" />
       </g>
       <path d="M 98 110 L 942 110 C 968.492 110 990 131.508 990 158 L 990 374 C 990 400.492 968.492 422 942 422 L 98 422 C 71.508 422 50 400.492 50 374 L 50 158 C 50 131.508 71.508 110 98 110 Z" style="stroke:none;fill:white;stroke-miterlimit:10;" />
-      <text width="940" x="520" y="__Y1__" text-anchor="middle" style="font-family:'Rounded-X Mgen+ 1p';font-weight:700;font-size:54px;font-style:normal;fill:black;stroke:none;line-height:120%;text-align:center">__CONTENT1__</text>
-      <text width="940" x="520" y="260" text-anchor="middle" style="font-family:'Rounded-X Mgen+ 1p';font-weight:700;font-size:54px;font-style:normal;fill:black;stroke:none;line-height:120%;text-align:center">__CONTENT2__</text>
-      <!-- <switch>
-        <foreignObject x="50" y="__Y1__" width="940" height="312">
-          <p xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Rounded-X Mgen+ 1p';font-weight:700;font-size:54px;font-style:normal;fill:black;stroke:none;line-height:120%;text-align:center">
-            __CONTENT__
-          </p>
-        </foreignObject>
-      </switch> -->
+      <text width="940" x="520" y="__Y1__" text-anchor="middle" style="font-family:'Rounded-X Mgen+ 1p';font-weight:700;font-size:54px;font-style:normal;fill:black;stroke:none;line-height:120%;text-align:center;letter-spacing:-3px">__CONTENT1__</text>
+      <text width="940" x="520" y="260" text-anchor="middle" style="font-family:'Rounded-X Mgen+ 1p';font-weight:700;font-size:54px;font-style:normal;fill:black;stroke:none;line-height:120%;text-align:center;letter-spacing:-3px">__CONTENT2__</text>
       <defs>
         <clipPath id="_clipPath_P9AdPmu1exAr6Wf6nvJbf7WihsQdSP5z">
           <rect x="0" y="0" width="871" height="162" transform="matrix(1,0,0,1,83,140)" />

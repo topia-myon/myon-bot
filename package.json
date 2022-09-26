@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "NODE_ENV=development onchange -i -k 'src/**/*.ts' -a 'package.json' -a 'tsconfig.json' -a '.env' -- npm run dev:command",
     "dev:command": "ts-node-esm src/index.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "start": "node dist/index.js",
     "deploy": "npm run build && fly deploy"
   },

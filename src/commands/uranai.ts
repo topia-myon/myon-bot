@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 import { ASSETS } from "../const.js";
 import { fetch } from "undici";
+import { Command } from "../types.js";
 
 const seiza = [
   {
@@ -105,7 +106,7 @@ const colorParameters = [
   },
 ] as const;
 
-const uranai = {
+const uranai: Command = {
   name: "占い",
   description: "ちいかわ占いを受ける！",
   prefix: "uranai",
@@ -156,10 +157,14 @@ const uranai = {
     const detailItem = detail.find(
       (item) => item.horoscope_st === seizaData.horoscape_st,
     )!;
+    detailItem.horoscope_text = detailItem.horoscope_text.replaceAll(
+      /\s/g,
+      " ",
+    );
     const parsed = (() => {
-      const content = detailItem.horoscope_text.includes("　ラッキー")
-        ? detailItem.horoscope_text.split("　ラッキー")[0]
-        : detailItem.horoscope_text.split("　")[0];
+      const content = detailItem.horoscope_text.includes(" ラッキー")
+        ? detailItem.horoscope_text.split(" ラッキー")[0]
+        : detailItem.horoscope_text.split(" ").slice(0, -1).join(" ");
       const rest = detailItem.horoscope_text.replace(content, "").trim();
       const recognizedLuckies = [
         "ラッキースポット",
@@ -169,7 +174,10 @@ const uranai = {
         "ラッキーナンバー",
       ];
       const subtitle =
-        recognizedLuckies.find((luck) => rest.startsWith(luck)) ?? "ラッキーアイテム";
+        recognizedLuckies.find((luck) => rest.startsWith(luck)) ??
+            rest.length > 5
+          ? ""
+          : "ラッキーアイテム";
       const item = rest.replace(subtitle, "").trim();
 
       return { content, subtitle, item };
@@ -189,9 +197,14 @@ const uranai = {
       }
 
       if (newContent === itemParameters.content) {
-        itemParameters.content = `${itemParameters.content.slice(0, 16)}\n${
-          itemParameters.content.slice(16)
-        }`;
+        const splitted = itemParameters.content.split(" ").reduce(
+          (acc, cur) =>
+            (acc.at(-1)?.length ?? 0) <= 16 - cur.length
+              ? [...acc.slice(0, -1), (acc.at(-1) ?? "") + cur]
+              : [...acc, cur],
+          [] as string[],
+        );
+        newContent = splitted.slice(0, 2).join("\n");
       }
 
       itemParameters.content = newContent;
@@ -210,13 +223,16 @@ const uranai = {
           : 4
       ],
       ...itemParameters,
-      width1: 38 + 48 * itemParameters.subtitle.length,
+      width1: itemParameters.subtitle.length === 0
+        ? 0
+        : 38 + 48 * itemParameters.subtitle.length,
       x1: 520 -
-        (93 +
+        ((itemParameters.subtitle.length === 0 ? 55 : 93) +
             48 *
               (itemParameters.subtitle.length + itemParameters.item.length)) /
           2,
-      x2: 70 + 48 * itemParameters.subtitle.length,
+      x2: (itemParameters.subtitle.length === 0 ? 32 : 70) +
+        48 * itemParameters.subtitle.length,
       y1: itemParameters.content.includes("\n") ? 200 : 230,
       content1: itemParameters.content.split("\n")[0],
       content2: itemParameters.content.split("\n").at(1) ?? "",

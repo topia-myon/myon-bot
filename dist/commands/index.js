@@ -1,3 +1,4 @@
+import send from "./send.js";
 import uranai from "./uranai.js";
-const commands = [uranai];
+const commands = [uranai, send];
 export default commands;
